@@ -1,0 +1,31 @@
+from manim import *
+class wire(Scene):
+    def construct(self):
+        
+        grid = Axes(x_range=[0, 1, 0.05], y_range=[0, 1, 0.05],x_length=9,y_length=5.5,
+            axis_config={
+                "numbers_to_include": np.arange(0, 1 + 0.1, 0.1),
+                "font_size": 24,},tips=False,)
+        
+        self.play(Create(grid))
+        y_label = grid.get_y_axis_label("y", edge=LEFT, direction=LEFT, buff=0.4)
+        x_label = grid.get_x_axis_label("x")
+        grid_labels = VGroup(x_label, y_label)
+        self.play(Create(grid_labels))
+        graphs = VGroup()
+        for n in np.arange(1, 20 + 0.5, 0.5):
+            graphs += grid.plot(lambda x: x ** n, color=random_color())
+            graphs += grid.plot(lambda x: x ** (1 / n), color=random_bright_color(), use_smoothing=False)
+
+        # Extra lines and labels for point (1,1)
+        graphs += grid.get_horizontal_line(grid @ (1, 1, 0), color=BLUE)
+        graphs += grid.get_vertical_line(grid @ (1, 1, 0), color=BLUE)
+        graphs += Dot(point=grid @ (1, 1, 0), color=YELLOW)
+        graphs += Tex("(1,1)").scale(0.75).next_to(grid @ (1, 1, 0))
+        self.play(Create(graphs),run_time=50)
+        
+        title = Title(
+            r"Graphs of $y=x^{ {1}\over{n} }$ and $y=x^n (n=1,2,3,...,20)$",
+            include_underline=False,font_size=40,color=PURE_GREEN)
+        self.play(Write(title),run_time=5)
+        self.play(FadeOut(title), FadeOut(graphs), FadeOut(grid), FadeOut(grid_labels))
